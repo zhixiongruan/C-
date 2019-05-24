@@ -1,7 +1,14 @@
 target/
+Debug/
 !.mvn/wrapper/maven-wrapper.jar
 *.log
 *.log-*
+
+*.vcxproj
+*.filters
+*.user
+*.sln
+.vs
 
 ### STS ###
 .apt_generated
