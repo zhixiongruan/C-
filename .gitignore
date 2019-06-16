@@ -5,6 +5,7 @@ Debug/
 *.log-*
 
 *.vcxproj
+.vscode
 *.filters
 *.user
 *.sln
