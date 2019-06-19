@@ -1,5 +1,6 @@
 target/
 Debug/
+cmake-build-debug/
 !.mvn/wrapper/maven-wrapper.jar
 *.log
 *.log-*
