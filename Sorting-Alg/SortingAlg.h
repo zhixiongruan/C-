@@ -6,7 +6,6 @@
 #define SORTING_ALG_SORTINGALG_H
 #include <algorithm>
 #include <iostream>
-#include <opencl-c.h>
 
 template <typename T>
 class SortingAlg {
@@ -235,12 +234,12 @@ void SortingAlg<T>::mergeSortingBU(T arr[], int n){
 
     // Merge Sort Bottom Up 优化
     for( int i = 0 ; i < n ; i += 16 )
-        insertSorting(arr,i,min(i+15,n-1));
+        insertSorting(arr,i,std::min(i+15,n-1));
 
     for( int sz = 16; sz <= n ; sz += sz )
         for( int i = 0 ; i < n - sz ; i += sz+sz )
             if( arr[i+sz-1] > arr[i+sz] )
-                merge(arr, i, i+sz-1, min(i+sz+sz-1,n-1) );
+                merge(arr, i, i+sz-1, std::min(i+sz+sz-1,n-1) );
 }
 
 
