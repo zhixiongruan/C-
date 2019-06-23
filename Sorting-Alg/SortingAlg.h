@@ -6,6 +6,7 @@
 #define SORTING_ALG_SORTINGALG_H
 #include <algorithm>
 #include <iostream>
+#include <opencl-c.h>
 
 template <typename T>
 class SortingAlg {
@@ -16,6 +17,13 @@ public:
     void insertSorting(T arr[], int n);
     void bubbleSorting(T arr[], int n);
     void shellSorting(T arr[], int n);
+    void mergeSorting(T arr[], int n);
+    void mergeSortingBU(T arr[], int n);
+
+private:
+    void insertSorting(T arr[], int l, int r);
+    void merge(T arr[], int l, int min, int r);
+    void mergeSorting(T arr[], int l, int r);
 
 };
 /**
@@ -64,6 +72,23 @@ void SortingAlg<T>::insertSorting(T arr[], int n) {
     for (int i = 1; i < n; i++){
         for (int j = i; j > 0 && arr[j] < arr[j - 1]; j--){
                 std::swap(arr[j], arr[j - 1]);
+        }
+    }
+}
+
+/**
+ * 对数组中一部分进行排序
+ * @tparam T
+ * @param arr
+ * @param l
+ * @param r
+ */
+template <typename T>
+void SortingAlg<T>::insertSorting(T arr[], int l, int r) {
+
+    for (int i = l + 1; i <= r; i++){
+        for (int j = i; j > l && arr[j] < arr[j - 1]; j--){
+            std::swap(arr[j], arr[j - 1]);
         }
     }
 }
@@ -134,6 +159,88 @@ void SortingAlg<T>::shellSorting(T arr[], int n) {
         }
         h = h / 3;
     }
+}
+
+/**
+ * 归并排序的排序方法，新建一个数组用于复制需要排序的数组
+ * @tparam T
+ * @param arr
+ * @param l
+ * @param mid
+ * @param r
+ */
+template<typename  T>
+void SortingAlg<T>::merge(T arr[], int l, int mid, int r){
+
+    T aux[r-l+1];
+    for( int i = l ; i <= r; i ++ )
+        aux[i-l] = arr[i];
+
+    int i = l, j = mid+1;
+    for( int k = l ; k <= r; k ++ ){
+
+        if( i > mid )   { arr[k] = aux[j-l]; j ++;}
+        else if( j > r ){ arr[k] = aux[i-l]; i ++;}
+        else if( aux[i-l] < aux[j-l] ){ arr[k] = aux[i-l]; i ++;}
+        else                          { arr[k] = aux[j-l]; j ++;}
+    }
+}
+
+/**
+ * 归并排序递归方法，
+ * 优化：1。可以把小于一定长度的部分进行插入排序；
+ * 2。如果左边最后一个数已经小于右边第一个数，就不需要进行归并排序了
+ * @tparam T
+ * @param arr
+ * @param l
+ * @param r
+ */
+template<typename  T>
+void SortingAlg<T>::mergeSorting(T arr[], int l, int r){
+
+    if (r - l <= 15){
+        insertSorting(arr, l, r);
+        return;
+    }
+    int min = (l + r) / 2;
+    mergeSorting(arr, l, min);
+    mergeSorting(arr, min + 1, r);
+    if (arr[min] > arr[min + 1]){
+        merge(arr, l, min, r);
+    }
+}
+
+/**
+ * 归并排序
+ * @tparam T
+ * @param arr
+ * @param n
+ */
+template<typename  T>
+void SortingAlg<T>::mergeSorting(T arr[], int n){
+
+    mergeSorting(arr, 0, n - 1);
+}
+
+/**
+ * 归并排序，自底向上的归并排序
+ * 1. 首先将数列划分成微小的数列，每个数列也就一到两个元素。
+ * 2. 不断合并
+ * @tparam T
+ * @param arr
+ * @param n
+ */
+template<typename  T>
+void SortingAlg<T>::mergeSortingBU(T arr[], int n){
+
+    // Merge Sort Bottom Up 优化
+    for( int i = 0 ; i < n ; i += 16 )
+        insertSorting(arr,i,min(i+15,n-1));
+
+    for( int sz = 16; sz <= n ; sz += sz )
+        for( int i = 0 ; i < n - sz ; i += sz+sz )
+            if( arr[i+sz-1] > arr[i+sz] )
+                merge(arr, i, i+sz-1, min(i+sz+sz-1,n-1) );
 }
 
 

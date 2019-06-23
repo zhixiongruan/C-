@@ -14,7 +14,7 @@ int main() {
 
     SortTestHelper::testSort(arr1, n, &sortingAlg, &SortingAlg<int>::insertSorting, "insertSorting");
 
-    SortTestHelper::testSort(arr2, n, &sortingAlg, &SortingAlg<int>::shellSorting, "shellSorting");
+    SortTestHelper::testSort(arr2, n, &sortingAlg, &SortingAlg<int>::mergeSorting, "mergeSorting");
 
     SortTestHelper::testSort(arr3, n, &sortingAlg, &SortingAlg<int>::selectSorting, "selectSorting");
 
