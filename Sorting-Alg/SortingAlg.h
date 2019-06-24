@@ -18,11 +18,14 @@ public:
     void shellSorting(T arr[], int n);
     void mergeSorting(T arr[], int n);
     void mergeSortingBU(T arr[], int n);
+    void quickSorting(T arr[], int n);
 
 private:
     void insertSorting(T arr[], int l, int r);
     void merge(T arr[], int l, int min, int r);
     void mergeSorting(T arr[], int l, int r);
+    void quickSorting(T arr[], int l, int r);
+    int partition(T arr[], int l, int r);
 
 };
 /**
@@ -240,6 +243,66 @@ void SortingAlg<T>::mergeSortingBU(T arr[], int n){
         for( int i = 0 ; i < n - sz ; i += sz+sz )
             if( arr[i+sz-1] > arr[i+sz] )
                 merge(arr, i, i+sz-1, std::min(i+sz+sz-1,n-1) );
+}
+
+/**
+ * 快速排序划分方法，
+ * 用第一个数将数组划分为大于第一个数的前一部分和小于第一个数的后一部分
+ * 把第一个设为数组中随机一个数是为了从概率上大大的减小了第一个数为最小或最大及相近数的概率
+ * @tparam T
+ * @param arr
+ * @param l
+ * @param r
+ */
+template<typename  T>
+int SortingAlg<T>::partition(T arr[], int l, int r){
+
+    swab(arr[l], arr[rand()%(r-l+1)+l]);
+    T tem = arr[l];
+    int j = l;
+    for (int i = l + 1; i <= r; i++){
+        if (arr[i] < tem) {
+            j++;
+            if (j != i)
+                std::swap(arr[j], arr[i]);
+        }
+    }
+    std::swap(arr[l], arr[j]);
+    return j;
+}
+
+/**
+ * 快速排序递归方法，
+ * 优化：1。可以把小于一定长度的部分进行插入排序；
+ * 2。如果左边最后一个数已经小于右边第一个数，就不需要进行归并排序了
+ * @tparam T
+ * @param arr
+ * @param l
+ * @param r
+ */
+template<typename  T>
+void SortingAlg<T>::quickSorting(T arr[], int l, int r){
+
+    if (r - l <= 15){
+        insertSorting(arr, l, r);
+        return;
+    }
+    int p = partition(arr, l, r);
+    quickSorting(arr, l, p - 1);
+    quickSorting(arr, p + 1, r);
+}
+
+/**
+ * 快速排序
+ * @tparam T
+ * @param arr
+ * @param n
+ */
+template<typename  T>
+void SortingAlg<T>::quickSorting(T arr[], int n){
+
+    srand(time(NULL));
+    quickSorting(arr, 0, n - 1);
 }
 
 

@@ -12,7 +12,9 @@ int main() {
     //栈中实例化对象
     SortingAlg<int> sortingAlg;
 
-    SortTestHelper::testSort(arr1, n, &sortingAlg, &SortingAlg<int>::mergeSortingBU, "mergeSortingBU");
+//    sortingAlg.quickSorting(arr1, 10);
+
+    SortTestHelper::testSort(arr1, n, &sortingAlg, &SortingAlg<int>::quickSorting, "quickSorting");
 
     SortTestHelper::testSort(arr2, n, &sortingAlg, &SortingAlg<int>::mergeSorting, "mergeSorting");
 
