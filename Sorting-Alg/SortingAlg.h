@@ -25,7 +25,7 @@ private:
     void merge(T arr[], int l, int min, int r);
     void mergeSorting(T arr[], int l, int r);
     void quickSorting(T arr[], int l, int r);
-    int partition(T arr[], int l, int r);
+    int* partition(T arr[], int l, int r);
 
 };
 /**
@@ -249,17 +249,22 @@ void SortingAlg<T>::mergeSortingBU(T arr[], int n){
  * 快速排序划分方法，
  * 用第一个数将数组划分为大于第一个数的前一部分和小于第一个数的后一部分
  * 把第一个设为数组中随机一个数是为了从概率上大大的减小了第一个数为最小或最大及相近数的概率
+ * 写法3是处理分割数有较多相同数，可以不相同的数单独组成中间的一段数组
  * @tparam T
  * @param arr
  * @param l
  * @param r
  */
 template<typename  T>
-int SortingAlg<T>::partition(T arr[], int l, int r){
+int* SortingAlg<T>::partition(T arr[], int l, int r){
 
-    swab(arr[l], arr[rand()%(r-l+1)+l]);
+    std::swap(arr[l], arr[rand()%(r-l+1)+l]);
     T tem = arr[l];
     int j = l;
+
+    //写法1
+    /**
+
     for (int i = l + 1; i <= r; i++){
         if (arr[i] < tem) {
             j++;
@@ -267,8 +272,52 @@ int SortingAlg<T>::partition(T arr[], int l, int r){
                 std::swap(arr[j], arr[i]);
         }
     }
+    */
+    //写法2
+    /**
+    int i = l+1, j = r;
+    while( true ){
+        while( i <= r && arr[i] < tem )
+            i ++;
+
+        while( j >= l+1 && arr[j] > tem )
+            j --;
+
+        if( i > j )
+            break;
+
+        swap( arr[i] , arr[j] );
+        i ++;
+        j --;
+    }
+     */
+
+    int gt = j + 1;
+//  写法3
+
+    gt = r + 1; // arr[gt...r] > v
+    int i = l+1;    // arr[lt+1...i) == v
+    while( i < gt ){
+        if( arr[i] < tem ){
+            std::swap( arr[i], arr[j+1]);
+            i ++;
+            j ++;
+        }
+        else if( arr[i] > tem ){
+            std::swap( arr[i], arr[gt-1]);
+            gt --;
+        }
+        else{ // arr[i] == v
+            i ++;
+        }
+    }
+
+
     std::swap(arr[l], arr[j]);
-    return j;
+    int *result = new int[2];
+    result[0] = j;
+    result[1] = gt;
+    return result;
 }
 
 /**
@@ -287,9 +336,9 @@ void SortingAlg<T>::quickSorting(T arr[], int l, int r){
         insertSorting(arr, l, r);
         return;
     }
-    int p = partition(arr, l, r);
-    quickSorting(arr, l, p - 1);
-    quickSorting(arr, p + 1, r);
+    int *p = partition(arr, l, r);
+    quickSorting(arr, l, p[0] - 1);
+    quickSorting(arr, p[1], r);
 }
 
 /**
