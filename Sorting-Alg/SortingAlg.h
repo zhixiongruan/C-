@@ -263,8 +263,7 @@ int* SortingAlg<T>::partition(T arr[], int l, int r){
     int j = l;
 
     //写法1
-    /**
-
+    #if 0
     for (int i = l + 1; i <= r; i++){
         if (arr[i] < tem) {
             j++;
@@ -272,10 +271,11 @@ int* SortingAlg<T>::partition(T arr[], int l, int r){
                 std::swap(arr[j], arr[i]);
         }
     }
-    */
+    #endif
     //写法2
-    /**
-    int i = l+1, j = r;
+    #if 0
+    int i = l+1;
+    j = r;
     while( true ){
         while( i <= r && arr[i] < tem )
             i ++;
@@ -290,11 +290,11 @@ int* SortingAlg<T>::partition(T arr[], int l, int r){
         i ++;
         j --;
     }
-     */
+    #endif
 
     int gt = j + 1;
 //  写法3
-
+    #if 1
     gt = r + 1; // arr[gt...r] > v
     int i = l+1;    // arr[lt+1...i) == v
     while( i < gt ){
@@ -311,6 +311,7 @@ int* SortingAlg<T>::partition(T arr[], int l, int r){
             i ++;
         }
     }
+    #endif
 
 
     std::swap(arr[l], arr[j]);
