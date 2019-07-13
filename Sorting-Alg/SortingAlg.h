@@ -11,6 +11,8 @@ template <typename T>
 class SortingAlg {
 public:
     SortingAlg();
+    SortingAlg(int x);
+    SortingAlg(T arr[], int n);
     ~SortingAlg();
     void selectSorting(T arr[], int n);
     void insertSorting(T arr[], int n);
@@ -19,13 +21,23 @@ public:
     void mergeSorting(T arr[], int n);
     void mergeSortingBU(T arr[], int n);
     void quickSorting(T arr[], int n);
+    void heapSorting(T arr[], int n);
 
 private:
+    T *data;
+    int count;
+    int container;
     void insertSorting(T arr[], int l, int r);
     void merge(T arr[], int l, int min, int r);
     void mergeSorting(T arr[], int l, int r);
     void quickSorting(T arr[], int l, int r);
     int* partition(T arr[], int l, int r);
+
+    void shiftUp(int x);
+    void shiftDown(int x);
+    void shiftDown(T arr[], int i, int n);
+    void buildHeap(T item);
+    T getMaxData();
 
 };
 /**
@@ -34,12 +46,44 @@ private:
  */
 template<typename T>
 SortingAlg<T>::SortingAlg() {}
+
+/**
+ * 构造函数
+ * @tparam T
+ */
+template<typename T>
+SortingAlg<T>::SortingAlg(int x) {
+    data = new T[x];
+    count = 0;
+    container = x;
+}
+
+/**
+ * 构造函数, 直接初始化最大堆
+ * @tparam T
+ */
+template<typename T>
+SortingAlg<T>::SortingAlg(T arr[], int n) {
+    data = new T[n];
+    for (int i = 0; i < n; ++i) {
+        data[i] = arr[i];
+    }
+    count = n - 1;
+    container = n;
+    for (int j = (n - 1)/2; j >= 0; j--){
+        shiftDown(j);
+    }
+}
 /**
  * 虚构函数
  * @tparam T
  */
 template<typename T>
-SortingAlg<T>::~SortingAlg() {}
+SortingAlg<T>::~SortingAlg() {
+    if (data != NULL){
+        delete[] data;
+    }
+}
 
 /**
  * 选择排序，从第一个数开始，依次找到当前位置最小值，然后交换；继续下一个寻找
@@ -249,7 +293,7 @@ void SortingAlg<T>::mergeSortingBU(T arr[], int n){
  * 快速排序划分方法，
  * 用第一个数将数组划分为大于第一个数的前一部分和小于第一个数的后一部分
  * 把第一个设为数组中随机一个数是为了从概率上大大的减小了第一个数为最小或最大及相近数的概率
- * 写法3是处理分割数有较多相同数，可以不相同的数单独组成中间的一段数组
+ * 写法3(三路快排)是处理分割数有较多相同数，可以不相同的数单独组成中间的一段数组
  * @tparam T
  * @param arr
  * @param l
@@ -353,6 +397,121 @@ void SortingAlg<T>::quickSorting(T arr[], int n){
 
     srand(time(NULL));
     quickSorting(arr, 0, n - 1);
+}
+
+/**
+ * 依次将data里的值进行比较，各子节点和其父节点比较，如果子节点大于父节点
+ * 则进行交换
+ * @tparam T
+ * @param x
+ */
+template <typename T>
+void SortingAlg<T>::shiftUp(int x) {
+    while (x > 0 && data[x] > data[(x - 1)/2]) {
+        std::swap(data[x], data[(x - 1)/2]);
+        x = (x - 1)/2;
+    }
+}
+
+/**
+ * 从上往下比较x处父节点和其子节点大小，如果有子节点的值大于父节点
+ * 则进行交换
+ * @tparam T
+ * @param x
+ */
+template <typename T>
+void SortingAlg<T>::shiftDown(int x) {
+    while (2 * x + 1 <= count) {
+        int j = 2 * x + 1;
+        if(j + 1 <= count && data[j] < data[j + 1])
+            j++;
+        if (data[x] >= data[j])
+            break;
+        std::swap(data[x], data[j]);
+        x = j;
+    }
+}
+
+/**
+ * 从上往下比较x处父节点和其子节点大小，如果有子节点的值大于父节点
+ * 则进行交换
+ * @tparam T
+ * @param x
+ */
+template <typename T>
+void SortingAlg<T>::shiftDown(T arr[], int i, int n) {
+    while (2 * i + 1 < n) {
+        int j = 2 * i + 1;
+        if(j + 1 < n && arr[j] < arr[j + 1])
+            j++;
+        if (arr[i] >= arr[j])
+            break;
+        std::swap(arr[i], arr[j]);
+        i = j;
+    }
+}
+
+/**
+ * 输入数据
+ * @tparam T
+ * @param item
+ */
+template <typename T>
+void SortingAlg<T>::buildHeap(T item) {
+    if (count + 1 >= container) {
+        container = container * 2;
+        T *newData = new T[container];
+        for (int i = 0; i <= count; i++) {
+            newData[i] = data[i];
+        }
+        data = newData;
+    }
+
+    data[count] = item;
+    shiftUp(count);
+    count++;
+}
+
+/**
+ * 取出堆中最大值并重构最大堆
+ * @tparam T
+ * @return
+ */
+template <typename T>
+T SortingAlg<T>::getMaxData() {
+    assert( count >= 0 );
+    T res = data[0];
+
+    std::swap(data[0], data[count]);
+    count--;
+    shiftDown(0);
+
+    return res;
+}
+
+template <typename T>
+void SortingAlg<T>::heapSorting(T arr[], int n) {
+#if 0
+    for (int i = 0; i < n; ++i) {
+        buildHeap(arr[i]);
+    }
+    count--;
+#endif
+
+#if 0
+    for (int j = n - 1; j >= 0; j--){
+        arr[j] = getMaxData();
+    }
+#endif
+#if 1
+    for( int i = (n-1)/2 ; i >= 0 ; i-- )
+        shiftDown(arr, i, n);
+
+    for( int i = n-1; i > 0 ; i-- ){
+        std::swap( arr[0] , arr[i] );
+        shiftDown(arr, 0, i);
+    }
+#endif
 }
 
 
