@@ -25,6 +25,8 @@ public:
 
 private:
     T *data;
+    int *indexes;
+    int *reverse;
     int count;
     int container;
     void insertSorting(T arr[], int l, int r);
@@ -38,6 +40,11 @@ private:
     void shiftDown(T arr[], int i, int n);
     void buildHeap(T item);
     T getMaxData();
+
+    void shiftUpIdx(int x);
+    void shiftDownIdx(int x);
+    void buildHeapIdx(int x, T item);
+    T getMaxDataIdx();
 
 };
 /**
@@ -56,6 +63,10 @@ SortingAlg<T>::SortingAlg(int x) {
     data = new T[x];
     count = 0;
     container = x;
+    indexes = new int[container];
+    reverse = new int[container];
+    for( int i = 0 ; i < container ; i ++ )
+        reverse[i] = -1;
 }
 
 /**
@@ -82,6 +93,8 @@ template<typename T>
 SortingAlg<T>::~SortingAlg() {
     if (data != NULL){
         delete[] data;
+        delete[] reverse;
+        delete[] indexes;
     }
 }
 
@@ -414,6 +427,21 @@ void SortingAlg<T>::shiftUp(int x) {
 }
 
 /**
+ * 维护索引，对索引进行堆处理
+ * @tparam T
+ * @param x
+ */
+template <typename T>
+void SortingAlg<T>::shiftUpIdx(int x) {
+    while (x > 0 && data[indexes[x]] > data[indexes[(x - 1)/2]]) {
+        std::swap(indexes[x], indexes[(x - 1)/2]);
+        reverse[indexes[x]] = x;
+        reverse[indexes[(x - 1)/2]] = (x - 1) / 2;
+        x = (x - 1)/2;
+    }
+}
+
+/**
  * 从上往下比较x处父节点和其子节点大小，如果有子节点的值大于父节点
  * 则进行交换
  * @tparam T
@@ -428,6 +456,20 @@ void SortingAlg<T>::shiftDown(int x) {
         if (data[x] >= data[j])
             break;
         std::swap(data[x], data[j]);
+        x = j;
+    }
+}
+template <typename T>
+void SortingAlg<T>::shiftDownIdx(int x) {
+    while (2 * x + 1 <= count) {
+        int j = 2 * x + 1;
+        if(j + 1 <= count && data[indexes[j]] < data[indexes[j + 1]])
+            j++;
+        if (data[indexes[x]] >= data[indexes[j]])
+            break;
+        std::swap(data[indexes[x]], data[indexes[j]]);
+        reverse[indexes[x]] = x;
+        reverse[indexes[j]] = j;
         x = j;
     }
 }
@@ -466,9 +508,30 @@ void SortingAlg<T>::buildHeap(T item) {
         }
         data = newData;
     }
-
     data[count] = item;
     shiftUp(count);
+    count++;
+}
+template <typename T>
+void SortingAlg<T>::buildHeapIdx(int x, T item) {
+    if (count + 1 >= container) {
+        container = container * 2;
+        T *newData = new T[container];
+        int *newIndexs = new int[container];
+        int *newReverse = new int[container];
+        for (int i = 0; i <= count; i++) {
+            newData[i] = data[i];
+            newIndexs[i] = indexes[i];
+            newReverse[i] = reverse[i];
+        }
+        data = newData;
+        indexes = newIndexs;
+        reverse = newReverse;
+    }
+    data[x] = item;
+    indexes[count] = x;
+    reverse[x] = count;
+    shiftUpIdx(count);
     count++;
 }
 
@@ -486,6 +549,19 @@ T SortingAlg<T>::getMaxData() {
     count--;
     shiftDown(0);
 
+    return res;
+}
+
+template <typename T>
+T SortingAlg<T>::getMaxDataIdx() {
+    assert( count >= 0 );
+    T res = data[indexes[0]];
+
+    std::swap(indexes[0], indexes[count]);
+    reverse[indexes[count]] = -1;
+    reverse[indexes[0]] = 0;
+    count--;
+    shiftDown(0);
     return res;
 }
 
