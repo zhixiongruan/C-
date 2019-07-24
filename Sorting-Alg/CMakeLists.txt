@@ -3,4 +3,4 @@ project(Sorting_Alg)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Sorting_Alg main.cpp SortTestHelper.h SortingAlg.h User.h)
+add_executable(Sorting_Alg main.cpp SortTestHelper.h SortingAlg.h User.h BinarySearchTree.h)

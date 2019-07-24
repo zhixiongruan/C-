@@ -1,9 +1,11 @@
 #include <iostream>
 #include "SortTestHelper.h"
 #include "SortingAlg.h"
+#include "BinarySearchTree.h"
 
 int main() {
     int n = 100;
+#if 0
     int *arr1 = SortTestHelper::createRandomArray(n, 1, 100);
     int *arr2 = SortTestHelper::copyArr(arr1, n);
 
@@ -25,5 +27,28 @@ int main() {
 //    SortTestHelper::testSort(arr3, n, &sortingAlg, &SortingAlg<int>::selectSorting, "selectSorting");
 //
 //    SortTestHelper::testSort(arr4, n, &sortingAlg, &SortingAlg<int>::shellSorting, "shellSorting");
+#endif
+
+#if 1
+    srand(time(NULL));
+    BinarySearchTree<int,int> bst1 = BinarySearchTree<int,int>();
+    int *a = new int[n];
+    for( int i = 0 ; i < n ; i ++ ){
+        int key = rand()%n;
+        // 为了后续测试方便,这里value值取和key值一样
+        int value = key;
+        a[i] = key;
+        bst1.insertNode(key,value);
+    }
+    bst1.levelOrder();
+    std::cout<<std::endl;
+    int i = a[40];
+    if( bst1.contain( i )){
+        bst1.remove(i);
+        std::cout<< "After remove " << i << " size = " << bst1.size() <<std::endl;
+        bst1.levelOrder();
+    }
+
+#endif
     return 0;
 }
