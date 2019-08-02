@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <ctime>
 #include <string>
@@ -16,25 +17,25 @@ using namespace std;
 
 
 int main() {
-#if 0
-    // TestG1.txt
-    string filename1 = "/Users/zhixiongruan/project/C-plus-plus/Sorting-Alg/testG1.txt";
-    GraphSparse g1 = GraphSparse(13, false);
-    ReadGraph<GraphSparse> readGraph1(g1, filename1);
-    GraphComponent<GraphSparse> component1(g1);
-    cout<<"TestG1.txt, Component Count: "<<component1.count()<<endl;
+#if 1
+    string filename = "/Users/zhixiongruan/project/C-plus-plus/Sorting-Alg/data/testG2.txt";
+    int V = 250;
+    cout<<fixed<<setprecision(2);
 
+    // Test Weighted Dense Graph
+    GraphDense<double> g1 = GraphDense<double>(V, false);
+    GraphRead<GraphDense<double>,double> readGraph1(g1, filename);
+    g1.show();
     cout<<endl;
 
-    // TestG2.txt
-    string filename2 = "/Users/zhixiongruan/project/C-plus-plus/Sorting-Alg/testG2.txt";
-    GraphSparse g2 = GraphSparse(7, false);
-    ReadGraph<GraphSparse> readGraph2(g2, filename2);
-    GraphComponent<GraphSparse> component2(g2);
-    cout<<"TestG2.txt, Component Count: "<<component2.count()<<endl;
+    // Test Weighted Sparse Graph
+    GraphSparse<double> g2 = GraphSparse<double>(V, false);
+    GraphRead<GraphSparse<double>,double> readGraph2(g2, filename);
+    g2.show();
+    cout<<endl;
 #endif
 
-#if 1
+#if 0
     string filename = "/Users/zhixiongruan/project/C-plus-plus/Sorting-Alg/testG2.txt";
     GraphSparse g = GraphSparse(7, false);
     ReadGraph<GraphSparse> readGraph(g, filename);
